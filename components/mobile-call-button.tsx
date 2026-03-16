@@ -11,7 +11,7 @@ export function MobileCallButton() {
         size="lg"
         className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-lg"
       >
-        <a href="tel:+73431234567" className="flex items-center justify-center gap-2">
+        <a href="tel:+79220226499" className="flex items-center justify-center gap-2">
           <Phone className="w-5 h-5" />
           Позвонить сейчас
         </a>
