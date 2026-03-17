@@ -9,8 +9,9 @@ import { Phone, Mail, MapPin, Clock, CheckCircle, Loader2, Send } from "lucide-r
 import { YandexMap } from "@/components/yandex-map"
 
 // Координаты: г. Екатеринбург, ул. Шефская, 3АВ
-const ADDRESS_LAT = 56.86872
-const ADDRESS_LON = 60.67340
+// Чтобы изменить координаты, обновите значения ниже (широта и долгота)
+const ADDRESS_LAT = 56.8725
+const ADDRESS_LON = 60.6595
 
 function getAddressUrl(): string {
   if (typeof window === "undefined") return "#"

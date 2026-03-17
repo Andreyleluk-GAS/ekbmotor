@@ -5,8 +5,9 @@ import Image from "next/image"
 import { Send } from "lucide-react"
 
 // Координаты: г. Екатеринбург, ул. Шефская, 3АВ
-const ADDRESS_LAT = 56.86872
-const ADDRESS_LON = 60.67340
+// Чтобы изменить координаты, обновите значения ниже (широта и долгота)
+const ADDRESS_LAT = 56.8725
+const ADDRESS_LON = 60.6595
 
 function handleAddressClick(e: React.MouseEvent<HTMLAnchorElement>) {
   e.preventDefault()
