@@ -4,7 +4,7 @@ export async function POST(request: Request) {
   try {
     const { name, phone, message } = await request.json()
 
-    // Validate required fields
+    // Проверка полей
     if (!name || !phone) {
       return NextResponse.json(
         { error: "Имя и телефон обязательны" },
@@ -12,8 +12,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Email content
-    const emailSubject = "Ekbmotor заявка с сайта"
+    const emailSubject = "EkbMotor: Новая заявка"
     const emailBody = `
 Новая заявка с сайта EkbMotor
 
@@ -22,49 +21,42 @@ export async function POST(request: Request) {
 ${message ? `Сообщение: ${message}` : ""}
 
 ---
-Отправлено с сайта ekbmotor.ru
+Отправлено через Resend
     `.trim()
-
-    // Send email using Resend or other email service
-    // For now, we'll use a simple fetch to a mail service
-    // You can replace this with your preferred email provider
     
+    // Получаем ключ из защищенного файла .env.local
     const RESEND_API_KEY = process.env.RESEND_API_KEY
 
-    if (RESEND_API_KEY) {
-      // If Resend API key is available, use it
-      const response = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: "EkbMotor <noreply@ekbmotor.ru>",
-          to: ["info@elitegas.ru"],
-          subject: emailSubject,
-          text: emailBody,
-        }),
-      })
+    if (!RESEND_API_KEY) {
+      console.error("ОШИБКА: API ключ Resend не найден.")
+      return NextResponse.json({ success: true, warning: "Key missing" })
+    }
 
-      if (!response.ok) {
-        console.error("Email send failed:", await response.text())
-        // Still return success to user - email failure shouldn't block the form
-      }
-    } else {
-      // Log the submission for debugging when no email service is configured
-      console.log("=== New Contact Form Submission ===")
-      console.log("To: info@elitegas.ru")
-      console.log("Subject:", emailSubject)
-      console.log("Body:", emailBody)
-      console.log("===================================")
+    // Отправка письма
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: "onboarding@resend.dev", // Системный адрес Resend
+        to: ["info@elitegas.ru"],      // Ваша целевая почта
+        subject: emailSubject,
+        text: emailBody,
+      }),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Ошибка Resend API:", errorText)
     }
 
     return NextResponse.json({
       success: true,
       message: "Заявка успешно отправлена",
-      clientName: name,
     })
+
   } catch (error) {
     console.error("Contact form error:", error)
     return NextResponse.json(
